@@ -1,12 +1,36 @@
 
 public class EquationBuilder {
-	private static final String[][] Operands = {{"+","-"},{"*","/"},{"^","log"}};
+	private final static String sin = "☢";
+	private final static String cos = "☣";
+	private final static String tan = "☠";
+	private final static String arcsin = "☭";
+	private final static String arccos = "☮";
+	private final static String arctan = "☯";
+	
+	private static final String[][] Operands = {
+			{"+","-"},
+			{"*","/"},
+			{"^","log, ln"},
+			{sin, cos, tan},
+			{arcsin, arccos, arctan}
+	};
+	
+	private static final String[][] Alias = {
+			{arcsin, "arcsin", "sin^-1"},
+			{arccos,"arccos", "cos^-1"}, 
+			{arctan,"arctan", "tan^-1"},			
+			{sin, "sin"}, 
+			{cos, "cos"},
+			{tan, "tan"}
+			
+	};
 	
 	//serves as wrapper function to private constructor
-	//adds error checking to string which will not need to be iteraively called
+	//adds error checking to string which will not need to be iteratively called
 	public static Equation build(String s) {
 		//TODO error checking
 		s= s.replaceAll("\\s+","");
+		s = replaceAlias(s); //eg convert sin^-1 to arcsin ectra
 		return recBuild(s);
 		
 	}
@@ -33,6 +57,16 @@ public class EquationBuilder {
 			return new Div(recBuild(lh),recBuild(rh));
 		} else if(oppStr.equals("^")) {
 			return new Pow(recBuild(lh),recBuild(rh));
+		}else if(oppStr.equals("ln")) {
+			return new Ln(recBuild(rh));
+		}else if(oppStr.equals("log")) {
+			//return new Ln(recBuild(rh));
+		}else if(oppStr.equals(sin)) {
+			return new Sin(recBuild(rh));
+		}else if(oppStr.equals(cos)) {
+			return new Cos(recBuild(rh));
+		}else if(oppStr.equals(tan)) {
+			//return new Tan(recBuild(rh));
 		}
 		
 		throw new Error("unable to evalautate opperant: "+oppStr);
@@ -109,6 +143,20 @@ public class EquationBuilder {
 		}
 	}
 	
+	
+	private static String replaceAlias(String s) {
+		for(int i = 0; i< Alias.length; i++) {
+			for(int j = 1; j<Alias[i].length; j++) {
+				while(true) {
+					int index = s.indexOf(Alias[i][j]);
+					if(index <0) break;
+					s = s.substring(0, index+1) +Alias[i][0] + s.substring(index+Alias[i][j].length(),s.length());
+				}
+			}
+			
+		}
+		return s;
+	}
 	
 	
 }

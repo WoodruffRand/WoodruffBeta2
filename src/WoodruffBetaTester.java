@@ -62,22 +62,7 @@ public class WoodruffBetaTester {
 		p = p.simplify();
 		assert(p instanceof Const);
 		assert(((Const)p).getV() ==4.0-5.0);
-		
-		
-		//Mult testing ////////////////////////////////
-		p = new Mult(null, null);
-		p = p.simplify();
-		assert(p instanceof Const);
-		assert( ((Const)p).getV()==0.0);
-		//testing null blancing
-		p = new Mult(a, null);
-		p =p.simplify();
-		assert(p instanceof Const);
-		assert( ((Const)p).getV()==0.0);
-		p = new Mult(null, b);
-		p = p.simplify();
-		assert(p instanceof Const);
-		assert( ((Const)p).getV()==0.0);
+	
 		//testing Zero simplification
 		p = new Mult(a, z);
 		p = p.simplify();
@@ -203,11 +188,11 @@ public class WoodruffBetaTester {
 		//System.out.println(myEq.toString());
 		assert(myEq.eval(c)==-9997.0);
 		myEq =myEq.derivativeOf("x");
-		assert(myEq.toString().equals("-4.0*x^(3.0)"));
+		assert(myEq.toString().equals("-4.0*(x^3.0)"));
 	
 		
 		myEq = EquationBuilder.build("3-x^1");
-		assert(myEq.toString().equals("3.0-x^(1.0)"));
+		assert(myEq.toString().equals("3.0-x^1.0"));
 		assert(myEq.eval(c)==-7.0);
 		myEq =myEq.derivativeOf("x");
 		assert(myEq.toString().equals("-1.0"));
@@ -226,7 +211,7 @@ public class WoodruffBetaTester {
 		print("Equation:"+myEQ.toString() );
 		myEQ = myEQ.derivativeOf("x");
 		print("Derivative: "+myEQ.toString());
-		assert(myEQ.toString().equals("3.0+30.0*x^(14.0)*x^(5.0)+10.0*x^(4.0)*x^(15.0)"));
+		assert(myEQ.toString().equals("3.0+30.0*(x^14.0)*(x^5.0)+10.0*(x^4.0)*(x^15.0)"));
 		
 		
 		
@@ -235,13 +220,14 @@ public class WoodruffBetaTester {
 		myEQ = myEQ.derivativeOf("x");
 		print("Derivative: "+myEQ.toString());
 		myEQ.simplify();
-		assert(myEQ.toString().equals("3.0-30.0*x^(14.0)*x^(5.0)+10.0*x^(4.0)*x^(15.0)"));
+		assert(myEQ.toString().equals("3.0-(30.0*(x^14.0)*(x^5.0)+10.0*(x^4.0)*(x^15.0))"));
+		
 		
 		
 		myEQ = EquationBuilder.build("x^9/(x)");
 		print("Equation:"+myEQ.toString() );
 		myEQ = myEQ.derivativeOf("x");
-		assert(myEQ.toString().equals("9.0*x^(8.0)*x-1.0*x^(9.0)/x^(2.0)"));
+		assert(myEQ.toString().equals("(9.0*(x^8.0)*x-x^9.0)/(x^2.0)"));
 		print("Derivative: "+myEQ.toString());
 		
 		HashMap<String, Double> c = new HashMap<String, Double>();
@@ -249,6 +235,15 @@ public class WoodruffBetaTester {
 		assert(myEQ.eval(c)==8.0);
 		c.put("x",2.0);
 		assert(myEQ.eval(c)==1024.0);
+		
+		
+		
+		myEQ = EquationBuilder.build("x*sin(x^4)");
+		myEQ = myEQ.derivativeOf("x");
+		print(myEQ);
+		myEQ = EquationBuilder.build("(sin(x^3)*cos(2*x))");
+		print(myEQ.derivativeOf("x"));
+		
 	}
 	
 	
@@ -266,7 +261,18 @@ public class WoodruffBetaTester {
 		multTest(c,x,a,b);
 		divTest(c,x,a,b);
 		expTest(c,x,a,b);
+		trigTest(c,x,a,b);
 		System.out.println("==Passed atomic Opp tests==");
+	}
+	
+	public static void trigTest(HashMap<String,Double> c,Var x, Const a, Const b) {
+		Equation p = EquationBuilder.build("sin(z)");
+		c.put("z", 0.0);
+		assert(p.eval(c)==0);
+		c.put("z", Math.PI/2.0);
+		assert(p.eval(c)==1.0);
+		
+		
 	}
 	
 	

@@ -45,6 +45,14 @@ public class Minus extends BiOpp{
 		return this;
 	}
 	public String toString() {
-		return lh.toString() +"-"+rh.toString();
+		String leftString =lh.toString();
+		String rightString = rh.toString();
+		
+	
+		if(rh instanceof Plus || rh instanceof Minus) {
+			rightString= addParentheses(rightString);
+		} 
+		
+		return leftString +"-"+rightString;
 	}
 }

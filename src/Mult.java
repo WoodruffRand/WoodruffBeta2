@@ -19,15 +19,20 @@ public class Mult extends BiOpp{
 	}
 	
 	protected Equation recurSimplify() {
-		if(lh == null || rh == null) return new Const(0.0);
 		if(isZero(lh) || isZero(rh) ) return new Const(0.0);
 		
 		this.lh =this.lh.recurSimplify();
-		if(lh == null || isZero(lh) ) return new Const(0.0);
+		if( isZero(lh) ) return new Const(0.0);
+		
 		this.rh =this.rh.recurSimplify();
 		if(this.rh == null || isZero(rh)) return new Const(0.0);
 		
+		if(isOne(lh)) return rh;
+		if(isOne(rh)) return lh;
 		
+		if(this.lh instanceof Const && this.rh instanceof Const) {
+			return new Const( this.eval(null) );
+		}
 		
 		if(this.rh instanceof Mult) {
 			if(this.hasConst() ) {
@@ -40,11 +45,10 @@ public class Mult extends BiOpp{
 				}
 			}
 			
-		} else if(this.lh instanceof Const && this.rh instanceof Const) {
-			return new Const(  ((Const)this.lh).getV()*((Const)this.rh).getV()    );
-		}
+		}  
+		
 
-	
+		
 		return this;
 	}
 	
@@ -92,7 +96,18 @@ public class Mult extends BiOpp{
 	}
 	
 	public String toString() {
-		return lh.toString() +"*"+rh.toString();
+		String leftString =lh.toString();
+		String rightString = rh.toString();
+		
+		if(!(lh instanceof Const || lh instanceof Var || lh instanceof Mult)) {
+			leftString= addParentheses(leftString);
+		}
+		
+		if(!(rh instanceof Const || rh instanceof Var || rh instanceof Mult)) {
+			rightString= addParentheses(rightString);
+		} 
+		
+		return leftString +"*"+rightString;
 	}
 
 

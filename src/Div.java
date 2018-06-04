@@ -12,7 +12,18 @@ public class Div extends BiOpp{
 	}
 	
 	public String toString() {
-		return lh.toString() +"/"+rh.toString();
+		String leftString =lh.toString();
+		String rightString = rh.toString();
+		
+		if(!(lh instanceof Const || lh instanceof Var)) {
+			leftString= addParentheses(leftString);
+		}
+		
+		if(!(rh instanceof Const || rh instanceof Var)) {
+			rightString= addParentheses(rightString);
+		} 
+		
+		return leftString +"/"+rightString;
 	}
 
 

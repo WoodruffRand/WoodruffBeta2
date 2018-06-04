@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.math.*;
 
 public abstract class Equation {
 	
@@ -34,4 +35,14 @@ public abstract class Equation {
 		
 	}
 	
+	protected boolean isOne(Equation e) {
+		if(!(e instanceof Const)) return false;
+		return (((Const)e).getV()==1.0);
+		
+	}
+	
+	protected String addParentheses(String s) {
+		if(s.charAt(0)=='(' && s.charAt(s.length()-1)==')') return s;
+		return "("+s+")";
+	}
 }
